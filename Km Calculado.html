@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Km Calculado - Calculadora Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .calculator-container {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 640px;
+            transition: transform 0.3s ease;
+        }
+
+        .calculator-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .header i {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        #resultado {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 0.75rem;
+            animation: slideUp 0.4s ease;
+        }
+
+        #resultado h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        #resultado p {
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+
+        #resultado strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            border-color: var(--error) !important;
+            background: #fef2f2;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 1.5rem;
+                border-radius: 1rem;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="header">
+            <h1><i class="fas fa-gas-pump"></i>Km Calculado</h1>
+            <p>Calculadora Inteligente de Custos de Viagem</p>
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-route"></i>Distância (km):</label>
+            <input type="number" id="distancia" step="0.1" required>
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-exchange-alt"></i>A viagem é de ida e volta?</label>
+            <select id="idaVolta">
+                <option value="nao">Não</option>
+                <option value="sim">Sim</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-city"></i>Possui deslocamento adicional? Se sim, insira a quantidade em Km que vai rodar:</label>
+            <select id="deslocamentoAdicional">
+                <option value="nao">Não</option>
+                <option value="sim">Sim</option>
+            </select>
+            <input type="number" id="kmAdicional" class="hidden" step="0.1">
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-tachometer-alt"></i>Qual o consumo médio do seu veículo (km/L):</label>
+            <input type="number" id="consumo" step="0.1" required>
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-gas-pump"></i>Preço da Gasolina (Valor por litro) (R$):</label>
+            <input type="number" id="precoGasolina" step="0.01" required>
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-toll"></i>Custo com Pedágios (Valor total R$):</label>
+            <input type="number" id="pedagios" step="0.01" required>
+        </div>
+
+        <button onclick="calcularCustoTotal()">
+            <i class="fas fa-calculator"></i> Calcular Viagem
+        </button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        document.getElementById('deslocamentoAdicional').addEventListener('change', function() {
+            const kmAdicionalField = document.getElementById('kmAdicional');
+            kmAdicionalField.classList.toggle('hidden', this.value !== 'sim');
+            kmAdicionalField.required = this.value === 'sim';
+        });
+
+        function validarCampo(input, mensagem, permiteZero = false) {
+            const value = input.valueAsNumber;
+            const isValid = !isNaN(value) && (permiteZero ? value >= 0 : value > 0);
+            
+            if (!isValid) {
+                input.classList.add('error');
+                setTimeout(() => alert(mensagem), 10);
+                return false;
+            }
+            input.classList.remove('error');
+            return true;
+        }
+
+        function calcularCustoTotal() {
+            const campos = {
+                distancia: document.getElementById('distancia'),
+                idaVolta: document.getElementById('idaVolta'),
+                deslocamentoAdicional: document.getElementById('deslocamentoAdicional'),
+                kmAdicional: document.getElementById('kmAdicional'),
+                consumo: document.getElementById('consumo'),
+                precoGasolina: document.getElementById('precoGasolina'),
+                pedagios: document.getElementById('pedagios')
+            };
+
+            const validacoes = [
+                validarCampo(campos.distancia, "Distância deve ser um número positivo!", false),
+                validarCampo(campos.consumo, "Consumo deve ser um número positivo!", false),
+                validarCampo(campos.precoGasolina, "Preço da gasolina deve ser um número não negativo!", true),
+                validarCampo(campos.pedagios, "Pedágios devem ser um número não negativo!", true)
+            ];
+
+            if (campos.deslocamentoAdicional.value === 'sim') {
+                validacoes.push(validarCampo(campos.kmAdicional, "KM adicional deve ser um número não negativo!", true));
+            }
+
+            if (validacoes.some(valid => !valid)) return;
+
+            const dados = {
+                distancia: campos.distancia.valueAsNumber,
+                idaVolta: campos.idaVolta.value === 'sim',
+                deslocamentoAdicional: campos.deslocamentoAdicional.value === 'sim',
+                kmAdicional: campos.kmAdicional.valueAsNumber || 0,
+                consumo: campos.consumo.valueAsNumber,
+                precoGasolina: campos.precoGasolina.valueAsNumber,
+                pedagios: campos.pedagios.valueAsNumber
+            };
+
+            let distanciaTotal = dados.distancia * (dados.idaVolta ? 2 : 1);
+            distanciaTotal += dados.deslocamentoAdicional ? dados.kmAdicional : 0;
+            
+            const litrosNecessarios = distanciaTotal / dados.consumo;
+            const custoCombustivel = litrosNecessarios * dados.precoGasolina;
+            const custoTotal = custoCombustivel + dados.pedagios;
+
+            document.getElementById('resultado').innerHTML = `
+                <h3>Detalhes do Cálculo:</h3>
+                <p>Distância Total: ${distanciaTotal.toFixed(1)} km</p>
+                <p>Combustível Necessário: ${litrosNecessarios.toFixed(1)} L</p>
+                <p>Custo Total: <strong>R$ ${custoTotal.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                })}</strong></p>
+            `;
+        }
+    </script>
+</body>
+</html>
